@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MBTI 사주팔자 - 당신의 운명을 알아보세요</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600;700&family=Noto+Sans+KR:wght@300;400;500&display=swap');
+
+  :root {
+    --gold: #c9a84c;
+    --dark: #1a1209;
+    --red: #8b1a1a;
+    --ink: #2c1810;
+    --paper: #f5ead5;
+    --cream: #fdf6e3;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--dark);
+    color: var(--paper);
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse at top, #2d1a08 0%, #1a1209 60%),
+      url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c9a84c' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  header {
+    text-align: center;
+    padding: 50px 20px 30px;
+    position: relative;
+  }
+
+  .title-deco {
+    font-size: 13px;
+    letter-spacing: 8px;
+    color: var(--gold);
+    opacity: 0.8;
+    margin-bottom: 12px;
+  }
+
+  h1 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 700;
+    color: var(--gold);
+    text-shadow: 0 0 40px rgba(201,168,76,0.4);
+    margin-bottom: 10px;
+    letter-spacing: 6px;
+  }
+
+  .subtitle {
+    font-size: 15px;
+    color: rgba(245,234,213,0.6);
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+
+  .divider {
+    width: 120px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 20px auto;
+  }
+
+  /* --- Selection Screen --- */
+  #selection-screen {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 20px 60px;
+  }
+
+  .section-title {
+    text-align: center;
+    font-family: 'Noto Serif KR', serif;
+    font-size: 18px;
+    color: var(--gold);
+    letter-spacing: 4px;
+    margin-bottom: 30px;
+  }
+
+  .mbti-group {
+    margin-bottom: 30px;
+  }
+
+  .group-label {
+    font-size: 12px;
+    letter-spacing: 3px;
+    color: rgba(201,168,76,0.6);
+    margin-bottom: 12px;
+    padding-left: 4px;
+  }
+
+  .mbti-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+
+  @media (max-width: 500px) {
+    .mbti-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .mbti-card {
+    background: rgba(201,168,76,0.06);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 8px;
+    padding: 18px 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mbti-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(201,168,76,0.1), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .mbti-card:hover {
+    border-color: var(--gold);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(201,168,76,0.2);
+  }
+
+  .mbti-card:hover::before { opacity: 1; }
+
+  .mbti-type {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 2px;
+  }
+
+  .mbti-nickname {
+    font-size: 11px;
+    color: rgba(245,234,213,0.5);
+    margin-top: 5px;
+    letter-spacing: 1px;
+  }
+
+  .mbti-element {
+    font-size: 20px;
+    margin-top: 8px;
+  }
+
+  /* --- Result Screen --- */
+  #result-screen {
+    display: none;
+    max-width: 750px;
+    margin: 0 auto;
+    padding: 0 20px 80px;
+  }
+
+  .result-card {
+    background: linear-gradient(145deg, rgba(40,25,10,0.95), rgba(30,18,8,0.98));
+    border: 1px solid var(--gold);
+    border-radius: 12px;
+    padding: 40px;
+    position: relative;
+    box-shadow: 0 0 60px rgba(201,168,76,0.15), inset 0 0 60px rgba(0,0,0,0.3);
+  }
+
+  .result-card::before,
+  .result-card::after {
+    content: '◆';
+    position: absolute;
+    color: var(--gold);
+    font-size: 10px;
+    opacity: 0.6;
+  }
+  .result-card::before { top: 14px; left: 14px; }
+  .result-card::after { bottom: 14px; right: 14px; }
+
+  .result-type-badge {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
+  .result-mbti {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 8px;
+    text-shadow: 0 0 30px rgba(201,168,76,0.5);
+  }
+
+  .result-nickname {
+    font-size: 14px;
+    color: rgba(245,234,213,0.6);
+    letter-spacing: 3px;
+    margin-top: 6px;
+  }
+
+  .saju-pillars {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin: 30px 0;
+  }
+
+  @media (max-width: 500px) {
+    .saju-pillars { grid-template-columns: repeat(2, 1fr); }
+    .result-card { padding: 24px 20px; }
+    .result-mbti { font-size: 36px; }
+  }
+
+  .pillar {
+    background: rgba(201,168,76,0.07);
+    border: 1px solid rgba(201,168,76,0.3);
+    border-radius: 8px;
+    padding: 16px 10px;
+    text-align: center;
+  }
+
+  .pillar-label {
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+    opacity: 0.8;
+  }
+
+  .pillar-heavenly {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 26px;
+    color: var(--paper);
+    font-weight: 600;
+  }
+
+  .pillar-earthly {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 26px;
+    color: rgba(245,234,213,0.65);
+    margin-top: 4px;
+    font-weight: 400;
+  }
+
+  .pillar-meaning {
+    font-size: 10px;
+    color: rgba(201,168,76,0.6);
+    margin-top: 8px;
+    letter-spacing: 1px;
+  }
+
+  .result-section {
+    margin-top: 28px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .section-header span {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 16px;
+    color: var(--gold);
+    letter-spacing: 2px;
+  }
+
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(201,168,76,0.4), transparent);
+  }
+
+  .fortune-text {
+    font-size: 14.5px;
+    line-height: 2;
+    color: rgba(245,234,213,0.85);
+    font-family: 'Noto Serif KR', serif;
+    letter-spacing: 0.5px;
+  }
+
+  .luck-bars {
+    display: grid;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .luck-row {
+    display: grid;
+    grid-template-columns: 60px 1fr 30px;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .luck-label {
+    font-size: 12px;
+    color: rgba(245,234,213,0.7);
+    letter-spacing: 1px;
+  }
+
+  .luck-bar-bg {
+    height: 6px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .luck-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--red), var(--gold));
+    transition: width 1s ease;
+  }
+
+  .luck-value {
+    font-size: 12px;
+    color: var(--gold);
+    text-align: right;
+  }
+
+  .compatible-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 10px;
+  }
+
+  .compat-box {
+    background: rgba(201,168,76,0.05);
+    border: 1px solid rgba(201,168,76,0.15);
+    border-radius: 6px;
+    padding: 12px;
+  }
+
+  .compat-title {
+    font-size: 11px;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+
+  .compat-title.good { color: #7ec8a0; }
+  .compat-title.bad { color: #e07070; }
+
+  .compat-types {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 14px;
+    color: var(--paper);
+    letter-spacing: 2px;
+  }
+
+  .yearly-fortune {
+    background: rgba(139,26,26,0.15);
+    border: 1px solid rgba(139,26,26,0.4);
+    border-radius: 8px;
+    padding: 16px 18px;
+    margin-top: 10px;
+  }
+
+  .yearly-year {
+    font-size: 12px;
+    color: #e07070;
+    letter-spacing: 3px;
+    margin-bottom: 8px;
+  }
+
+  .yearly-text {
+    font-size: 14px;
+    line-height: 1.9;
+    color: rgba(245,234,213,0.8);
+    font-family: 'Noto Serif KR', serif;
+  }
+
+  .back-btn {
+    display: block;
+    width: 180px;
+    margin: 30px auto 0;
+    padding: 14px 0;
+    text-align: center;
+    background: transparent;
+    border: 1px solid rgba(201,168,76,0.5);
+    border-radius: 6px;
+    color: var(--gold);
+    font-size: 14px;
+    letter-spacing: 3px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+
+  .back-btn:hover {
+    background: rgba(201,168,76,0.1);
+    border-color: var(--gold);
+    box-shadow: 0 0 20px rgba(201,168,76,0.2);
+  }
+
+  .particles {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .particle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: var(--gold);
+    border-radius: 50%;
+    opacity: 0;
+    animation: float-up 8s infinite;
+  }
+
+  @keyframes float-up {
+    0% { opacity: 0; transform: translateY(100vh) scale(0); }
+    10% { opacity: 0.6; }
+    90% { opacity: 0.2; }
+    100% { opacity: 0; transform: translateY(-10vh) scale(1.5); }
+  }
+
+  .fade-in {
+    animation: fadeIn 0.6s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 11px;
+    color: rgba(201,168,76,0.3);
+    letter-spacing: 2px;
+  }
+</style>
+</head>
+<body>
+
+<div class="particles" id="particles"></div>
+
+<header>
+  <div class="title-deco">✦ 운명의 문 ✦</div>
+  <h1>MBTI 사주팔자</h1>
+  <div class="subtitle">당신의 성격이 품은 하늘의 뜻</div>
+  <div class="divider"></div>
+</header>
+
+<!-- Selection Screen -->
+<div id="selection-screen">
+  <p class="section-title">당신의 MBTI를 선택하세요</p>
+
+  <div class="mbti-group">
+    <div class="group-label">🔥 직관형 (NT) — 불의 기운</div>
+    <div class="mbti-grid">
+      <div class="mbti-card" onclick="showResult('INTJ')">
+        <div class="mbti-type">INTJ</div>
+        <div class="mbti-nickname">전략가</div>
+        <div class="mbti-element">♟</div>
+      </div>
+      <div class="mbti-card" onclick="showResult('INTP')">
+        <div class="mbti-type">INTP</div>
+        <div class="mbti-nickname">논리술사</div>
+        <div class="mbti-element">🔭</div>
+      </div>
+      <div class="mbti-card" onclick="showResult('ENTJ')">
+        <div class="mbti-type">ENTJ</div>
+        <div class="mbti-nickname">통솔자</div>
+        <div class="mbti-element">⚔</div>
+      </div>
+      <div class="mbti-card" onclick="showResult('ENTP')">
+        <div class="mbti-type">ENTP</div>
+        <div class="mbti-nickname">변론가</div>
+        <div class="mbti-element">🌪</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mbti-group">
+    <div class="group-label">💧 감성형 (NF) — 물의 기운</div>
+    <div class="mbti-grid">
+      <div class="mbti-card" onclick="showResult('INFJ')">
+        <div class="mbti-type">INFJ</div>
+        <div class="mbti-nickname">옹호자</div>
+        <div class="mbti-element">🌙</div>
+      </div>
+      <div class="mbti-card" onclick="showResult('INFP')">
+        <div class="mbti-type">INFP</div>
+        <div class="mbti-nickname">중재자</div>
+        <div class="mbti-element">🌿</div>
+      </div>
+      <div class="mbti-card" onclick="showResult('ENFJ')">
+        <div class="mbti-type">ENFJ</div>
+        <div class="mbti-nickname">선도자</div>
+        <div class="mbti-element">☀</div>
+      </div>
+      <div class="mbti-card" onclick="showResult('ENFP')">
+        <div class="mbti-type">ENFP</div>
+        <div class="mbti-nickname">활동가</div>
+        <div class="mbti-element">🌸</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mbti-group">
+    <div class="group-label">⛰ 감각형 (SJ) — 흙의 기운</div>
+    <div class="mbti-grid">
+      <div class="mbti-card" onclick="showResult('ISTJ')">
+        <div class="mbti-type">ISTJ</div>
+        <div class="mbti-nickname">현실주의자</div>
+        <div class="mbti-element">⛩</div>
+      </div>
+      <div class="mbti-card" onclick="showResult('ISFJ')">
+        <div class="mbti-type">ISFJ</div>
+        <div class="mbti-nickname">수호자</div>
+        <div class="mbti-element">🏡</div>
+      </div>
+      <div class="mbti-card" onclick="showResult('ESTJ')">
+        <div class="mbti-type">ESTJ</div>
+        <div class="mbti-nickname">경영자</div>
+        <div class="mbti-element">📜</div>
+      </div>
+      <div class="mbti-card" onclick="showResult('ESFJ')">
+        <div class="mbti-type">ESFJ</div>
+        <div class="mbti-nickname">집정관</div>
+        <div class="mbti-element">🏮</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mbti-group">
+    <div class="group-label">🌬 탐험형 (SP) — 바람의 기운</div>
+    <div class="mbti-grid">
+      <div class="mbti-card" onclick="showResult('ISTP')">
+        <div class="mbti-type">ISTP</div>
+        <div class="mbti-nickname">장인</div>
+        <div class="mbti-element">🗡</div>
+      </div>
+      <div class="mbti-card" onclick="showResult('ISFP')">
+        <div class="mbti-type">ISFP</div>
+        <div class="mbti-nickname">모험가</div>
+        <div class="mbti-element">🎨</div>
+      </div>
+      <div class="mbti-card" onclick="showResult('ESTP')">
+        <div class="mbti-type">ESTP</div>
+        <div class="mbti-nickname">기업가</div>
+        <div class="mbti-element">🐉</div>
+      </div>
+      <div class="mbti-card" onclick="showResult('ESFP')">
+        <div class="mbti-type">ESFP</div>
+        <div class="mbti-nickname">연예인</div>
+        <div class="mbti-element">🎭</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Result Screen -->
+<div id="result-screen">
+  <div class="result-card fade-in" id="result-card">
+    <div class="result-type-badge">
+      <div class="result-mbti" id="res-mbti"></div>
+      <div class="result-nickname" id="res-nickname"></div>
+    </div>
+    <div class="divider"></div>
+
+    <div class="saju-pillars" id="res-pillars"></div>
+
+    <div class="result-section">
+      <div class="section-header">
+        <span>천명 (天命)</span>
+        <div class="section-line"></div>
+      </div>
+      <div class="fortune-text" id="res-destiny"></div>
+    </div>
+
+    <div class="result-section">
+      <div class="section-header">
+        <span>운세 (運勢)</span>
+        <div class="section-line"></div>
+      </div>
+      <div class="luck-bars" id="res-luck"></div>
+    </div>
+
+    <div class="result-section">
+      <div class="section-header">
+        <span>2025년 운수</span>
+        <div class="section-line"></div>
+      </div>
+      <div class="yearly-fortune">
+        <div class="yearly-year">乙巳年 (을사년) · 뱀의 해</div>
+        <div class="yearly-text" id="res-yearly"></div>
+      </div>
+    </div>
+
+    <div class="result-section">
+      <div class="section-header">
+        <span>궁합 (宮合)</span>
+        <div class="section-line"></div>
+      </div>
+      <div class="compatible-grid">
+        <div class="compat-box">
+          <div class="compat-title good">✦ 천생연분</div>
+          <div class="compat-types" id="res-good"></div>
+        </div>
+        <div class="compat-box">
+          <div class="compat-title bad">✦ 상극지인</div>
+          <div class="compat-types" id="res-bad"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <button class="back-btn" onclick="goBack()">← 다시 선택</button>
+</div>
+
+<footer>사주는 참고용이며 실제 운명을 결정하지 않습니다 · MBTI 사주팔자 ©2025</footer>
+
+<script>
+const DATA = {
+  INTJ: {
+    nickname: '전략가 · 마스터마인드',
+    pillars: [
+      { label: '년주', h: '壬', e: '子', hm: '임', em: '자' },
+      { label: '월주', h: '庚', e: '戌', hm: '경', em: '술' },
+      { label: '일주', h: '甲', e: '午', hm: '갑', em: '오' },
+      { label: '시주', h: '壬', e: '寅', hm: '임', em: '인' }
+    ],
+    destiny: '하늘이 내린 독수리의 운명. 홀로 높은 곳에서 세상을 내려다보며 수천 수를 앞서 읽는 천리안(千里眼)의 기운을 타고났습니다. 壬水의 깊은 지혜와 甲木의 곧은 기상이 합쳐져, 혼자 걷는 길이지만 결국 세상이 그 뒤를 따르게 됩니다. 완성을 추구하는 집착이 때로 고독을 부르지만, 그 고독 속에서 가장 빛나는 별이 됩니다.',
+    luck: [
+      { label: '재물운', val: 82 }, { label: '관운', val: 95 },
+      { label: '애정운', val: 48 }, { label: '건강운', val: 70 },
+      { label: '명예운', val: 90 }
+    ],
+    yearly: '올해 을사년은 뱀의 지혜가 당신의 전략적 사고와 공명하는 해입니다. 3월과 9월 사이, 오랫동안 준비해온 계획이 결실을 맺을 기운이 강합니다. 다만 지나친 고집은 귀인을 멀리할 수 있으니, 신뢰하는 한 사람의 조언에 귀 기울이십시오.',
+    good: 'INFJ · ENFP',
+    bad: 'ESFP · ESTP'
+  },
+  INTP: {
+    nickname: '논리술사 · 철학자',
+    pillars: [
+      { label: '년주', h: '庚', e: '申', hm: '경', em: '신' },
+      { label: '월주', h: '壬', e: '子', hm: '임', em: '자' },
+      { label: '일주', h: '戊', e: '辰', hm: '무', em: '진' },
+      { label: '시주', h: '甲', e: '寅', hm: '갑', em: '인' }
+    ],
+    destiny: '우주의 이치를 탐구하는 천문관(天文官)의 사주입니다. 庚金의 예리한 논리와 壬水의 무한한 상상력이 결합하여, 남들이 보지 못하는 패턴과 진리를 꿰뚫어 봅니다. 머릿속에는 수백 개의 미완성 이론이 공존하며, 이것이 창조적 혼돈이자 천재성의 원천입니다. 戊辰 일주는 든든한 산과 같아, 겉으론 조용해도 내면은 광활한 우주입니다.',
+    luck: [
+      { label: '재물운', val: 60 }, { label: '관운', val: 72 },
+      { label: '애정운', val: 45 }, { label: '건강운', val: 65 },
+      { label: '명예운', val: 85 }
+    ],
+    yearly: '을사년의 뱀 기운은 당신의 탐구욕을 최고조로 끌어올립니다. 특히 상반기에 오랫동안 풀리지 않던 문제의 실마리가 보입니다. 사람보다 아이디어에 집중하게 되는 한 해이나, 6월쯤 찾아오는 협업의 기회를 놓치지 마십시오.',
+    good: 'ENTJ · INFJ',
+    bad: 'ESFJ · ESTJ'
+  },
+  ENTJ: {
+    nickname: '통솔자 · 대장군',
+    pillars: [
+      { label: '년주', h: '甲', e: '子', hm: '갑', em: '자' },
+      { label: '월주', h: '丙', e: '午', hm: '병', em: '오' },
+      { label: '일주', h: '庚', e: '申', hm: '경', em: '신' },
+      { label: '시주', h: '戊', e: '戌', hm: '무', em: '술' }
+    ],
+    destiny: '하늘이 장수의 기운을 내린 사주입니다. 丙火의 강렬한 카리스마와 庚金의 날카로운 결단력이 합쳐진 대장군(大將軍)의 명입니다. 태어날 때부터 사람들이 따르는 기운을 지녔으며, 불가능해 보이는 목표를 현실로 바꾸는 의지력을 가집니다. 다만 火克金의 기운으로 과욕이 생기면 주변이 피로해지니, 쉬어가는 지혜가 필요합니다.',
+    luck: [
+      { label: '재물운', val: 90 }, { label: '관운', val: 97 },
+      { label: '애정운', val: 55 }, { label: '건강운', val: 68 },
+      { label: '명예운', val: 95 }
+    ],
+    yearly: '을사년은 당신에게 왕의 해입니다. 야망이 현실이 되는 강한 기운이 흐르며, 특히 사업과 커리어에서 큰 도약이 예상됩니다. 10월에 찾아오는 귀인을 주목하십시오. 단 건강 관리를 소홀히 하면 모든 것이 허사가 되니, 충분한 휴식도 전략임을 잊지 마십시오.',
+    good: 'INTP · INFP',
+    bad: 'ISFP · INFJ'
+  },
+  ENTP: {
+    nickname: '변론가 · 책사',
+    pillars: [
+      { label: '년주', h: '丙', e: '午', hm: '병', em: '오' },
+      { label: '월주', h: '甲', e: '寅', hm: '갑', em: '인' },
+      { label: '일주', h: '壬', e: '子', hm: '임', em: '자' },
+      { label: '시주', h: '庚', e: '申', hm: '경', em: '신' }
+    ],
+    destiny: '바람처럼 자유로운 책사(策士)의 사주입니다. 壬水의 무한한 가능성과 丙火의 번쩍이는 영감이 만나, 어느 상황에서도 돌파구를 찾아내는 귀신같은 직관을 지녔습니다. 모든 것에 의문을 던지고 기존의 틀을 깨뜨리는 것이 천명이며, 그 과정에서 새로운 길이 열립니다. 한 곳에 오래 머물면 기운이 막히니, 늘 새로운 도전이 필요합니다.',
+    luck: [
+      { label: '재물운', val: 75 }, { label: '관운', val: 70 },
+      { label: '애정운', val: 65 }, { label: '건강운', val: 72 },
+      { label: '명예운', val: 80 }
+    ],
+    yearly: '을사년의 뱀 기운이 당신의 영민한 두뇌를 더욱 날카롭게 합니다. 상반기에는 새로운 아이디어가 넘쳐나고, 하반기에는 그중 하나가 실제로 빛을 발합니다. 7월에 만나는 안정적인 파트너가 당신의 아이디어를 현실로 연결해줄 열쇠입니다.',
+    good: 'INFJ · INTJ',
+    bad: 'ISFJ · ISTJ'
+  },
+  INFJ: {
+    nickname: '옹호자 · 선각자',
+    pillars: [
+      { label: '년주', h: '癸', e: '亥', hm: '계', em: '해' },
+      { label: '월주', h: '丁', e: '卯', hm: '정', em: '묘' },
+      { label: '일주', h: '己', e: '未', hm: '기', em: '미' },
+      { label: '시주', h: '癸', e: '丑', hm: '계', em: '축' }
+    ],
+    destiny: '달빛 아래 피어나는 연꽃과 같은 사주입니다. 癸水의 깊은 통찰과 丁火의 따뜻한 불꽃이 공존하는 희귀한 명입니다. 겉은 조용하나 내면에는 타오르는 사명감이 있으며, 남들이 느끼지 못하는 것을 먼저 감지하는 신비로운 직관력을 타고났습니다. 세상을 더 아름답게 만들려는 갈망이 삶의 원동력이 됩니다.',
+    luck: [
+      { label: '재물운', val: 65 }, { label: '관운', val: 75 },
+      { label: '애정운', val: 80 }, { label: '건강운', val: 60 },
+      { label: '명예운', val: 88 }
+    ],
+    yearly: '을사년은 당신의 직관이 빛을 발하는 해입니다. 오래전부터 느껴온 예감이 현실로 확인되는 순간들이 찾아옵니다. 4월과 11월에 중요한 인연이 찾아오며, 그 만남이 당신의 사명을 더욱 명확히 해줄 것입니다. 에너지 소진에 주의하고 혼자만의 시간을 충분히 확보하십시오.',
+    good: 'INTJ · ENTP',
+    bad: 'ESTP · ESFP'
+  },
+  INFP: {
+    nickname: '중재자 · 시인',
+    pillars: [
+      { label: '년주', h: '丁', e: '卯', hm: '정', em: '묘' },
+      { label: '월주', h: '癸', e: '亥', hm: '계', em: '해' },
+      { label: '일주', h: '乙', e: '未', hm: '을', em: '미' },
+      { label: '시주', h: '丁', e: '亥', hm: '정', em: '해' }
+    ],
+    destiny: '봄바람에 흔들리는 버들가지와 같은, 섬세하고 아름다운 사주입니다. 乙木의 부드러운 감수성과 丁火의 이상주의가 결합하여, 세상의 아름다움을 누구보다 깊이 느끼고 표현합니다. 가슴 속에 가득한 이야기와 감정이 창조적 에너지의 원천이며, 평범한 일상에서 시(詩)를 발견하는 재능이 있습니다. 현실과 이상 사이에서 균형을 찾는 것이 평생의 과업입니다.',
+    luck: [
+      { label: '재물운', val: 50 }, { label: '관운', val: 60 },
+      { label: '애정운', val: 85 }, { label: '건강운', val: 62 },
+      { label: '명예운', val: 75 }
+    ],
+    yearly: '을사년은 창작의 해입니다. 내면에서 꿈틀대던 창조적 에너지가 폭발적으로 분출될 준비가 되어있습니다. 5월에 시작하는 새로운 프로젝트나 취미가 당신의 삶을 바꿀 수 있습니다. 재물운은 약하지만 마음의 풍요로움이 넘치는 한 해입니다.',
+    good: 'ENFJ · ENTJ',
+    bad: 'ESTJ · ESFJ'
+  },
+  ENFJ: {
+    nickname: '선도자 · 빛의 전령',
+    pillars: [
+      { label: '년주', h: '丙', e: '寅', hm: '병', em: '인' },
+      { label: '월주', h: '甲', e: '午', hm: '갑', em: '오' },
+      { label: '일주', h: '丁', e: '卯', hm: '정', em: '묘' },
+      { label: '시주', h: '甲', e: '子', hm: '갑', em: '자' }
+    ],
+    destiny: '온 세상을 품으려는 태양 같은 사주입니다. 丙火와 丁火가 함께 빛나는 이중 화기(火氣)의 명으로, 주변 사람들에게 자연스럽게 온기와 희망을 나누어줍니다. 사람의 마음을 읽고 이끄는 능력은 타의 추종을 불허하며, 진정한 리더십이란 힘이 아닌 사랑임을 몸소 실천하는 명입니다. 스스로를 돌보는 시간도 반드시 필요합니다.',
+    luck: [
+      { label: '재물운', val: 72 }, { label: '관운', val: 80 },
+      { label: '애정운', val: 90 }, { label: '건강운', val: 65 },
+      { label: '명예운', val: 87 }
+    ],
+    yearly: '을사년은 당신의 영향력이 크게 확장되는 해입니다. 이끌어왔던 사람들이 꽃을 피우는 모습을 보게 되며, 그것이 최고의 보람이 됩니다. 2월과 8월에 당신의 도움을 필요로 하는 중요한 인연이 찾아옵니다. 감정 과부하에 주의하고 경계를 명확히 하십시오.',
+    good: 'INFP · ISFP',
+    bad: 'INTP · ISTP'
+  },
+  ENFP: {
+    nickname: '활동가 · 자유혼',
+    pillars: [
+      { label: '년주', h: '甲', e: '午', hm: '갑', em: '오' },
+      { label: '월주', h: '丙', e: '寅', hm: '병', em: '인' },
+      { label: '일주', h: '戊', e: '子', hm: '무', em: '자' },
+      { label: '시주', h: '丙', e: '午', hm: '병', em: '오' }
+    ],
+    destiny: '봄 축제처럼 활기차고 풍성한 사주입니다. 甲木의 새싹 같은 순수함과 丙火의 폭발적 열정이 조화를 이루어, 만나는 모든 것에서 가능성을 발견합니다. 세상 모든 것이 흥미롭고 아름다워 보이는 선물 같은 시선을 타고났습니다. 수백 가지 꿈을 동시에 꾸지만, 진정 하나에 집중할 때 하늘의 도움이 따릅니다.',
+    luck: [
+      { label: '재물운', val: 68 }, { label: '관운', val: 65 },
+      { label: '애정운', val: 88 }, { label: '건강운', val: 75 },
+      { label: '명예운', val: 70 }
+    ],
+    yearly: '을사년은 만남과 인연의 해입니다. 새로운 사람들, 새로운 세계와의 조우가 풍성합니다. 상반기에는 새로운 시작에 대한 설렘이 가득하고, 하반기에는 그중 진짜를 골라내는 안목이 필요합니다. 산만함을 경계하고 하나에 집중하면 큰 성과를 거둘 수 있습니다.',
+    good: 'INTJ · INFJ',
+    bad: 'ISFJ · ISTJ'
+  },
+  ISTJ: {
+    nickname: '현실주의자 · 반석',
+    pillars: [
+      { label: '년주', h: '庚', e: '申', hm: '경', em: '신' },
+      { label: '월주', h: '戊', e: '戌', hm: '무', em: '술' },
+      { label: '일주', h: '庚', e: '辰', hm: '경', em: '진' },
+      { label: '시주', h: '戊', e: '申', hm: '무', em: '신' }
+    ],
+    destiny: '천 년의 고목처럼 흔들리지 않는 반석(磐石)의 사주입니다. 庚金의 강인한 의지와 戊土의 묵직한 신뢰감이 합쳐진 명으로, 어떤 폭풍도 견뎌내는 불굴의 정신을 타고났습니다. 약속을 목숨보다 중히 여기며, 그 신뢰가 쌓여 결국 큰 산을 이룹니다. 변화를 두려워하지 말고, 새로운 것을 받아들일 때 더 크게 성장합니다.',
+    luck: [
+      { label: '재물운', val: 85 }, { label: '관운', val: 88 },
+      { label: '애정운', val: 55 }, { label: '건강운', val: 80 },
+      { label: '명예운', val: 82 }
+    ],
+    yearly: '을사년은 묵묵히 쌓아온 노력이 결실을 맺는 해입니다. 오랜 시간 준비해온 일에서 공식적인 인정을 받게 됩니다. 직장과 재물에서 안정적인 상승이 예상되며, 하반기에 부동산 관련 좋은 소식이 올 수 있습니다. 건강을 위한 규칙적인 운동을 시작하기 좋은 해입니다.',
+    good: 'ESFJ · ESTJ',
+    bad: 'ENFP · ENTP'
+  },
+  ISFJ: {
+    nickname: '수호자 · 자애',
+    pillars: [
+      { label: '년주', h: '己', e: '丑', hm: '기', em: '축' },
+      { label: '월주', h: '丁', e: '未', hm: '정', em: '미' },
+      { label: '일주', h: '己', e: '亥', hm: '기', em: '해' },
+      { label: '시주', h: '丁', e: '卯', hm: '정', em: '묘' }
+    ],
+    destiny: '봄 햇살처럼 따뜻하게 주변을 감싸는 자애(慈愛)의 사주입니다. 己土의 포근한 품과 丁火의 은은한 불빛이 만나, 조용히 곁에 있는 것만으로도 사람들에게 안정감을 줍니다. 자신보다 타인을 먼저 생각하는 헌신적인 성품은 하늘이 내린 선물이며, 그 사랑이 반드시 돌아오게 되어 있습니다. 자신의 감정과 필요도 소중히 여기십시오.',
+    luck: [
+      { label: '재물운', val: 70 }, { label: '관운', val: 75 },
+      { label: '애정운', val: 82 }, { label: '건강운', val: 72 },
+      { label: '명예운', val: 68 }
+    ],
+    yearly: '을사년은 봉사와 헌신이 빛을 발하는 해입니다. 오랫동안 묵묵히 도와온 사람들로부터 뜻밖의 감사와 보답이 찾아옵니다. 가정과 가족 관계에서 특히 좋은 기운이 흐르며, 5월에 따뜻한 소식이 있을 것입니다. 자신을 위한 시간을 갖는 것도 이 해의 중요한 과제입니다.',
+    good: 'ESFJ · ISTJ',
+    bad: 'ENTP · ENFP'
+  },
+  ESTJ: {
+    nickname: '경영자 · 기둥',
+    pillars: [
+      { label: '년주', h: '戊', e: '戌', hm: '무', em: '술' },
+      { label: '월주', h: '庚', e: '申', hm: '경', em: '신' },
+      { label: '일주', h: '戊', e: '午', hm: '무', em: '오' },
+      { label: '시주', h: '丙', e: '戌', hm: '병', em: '술' }
+    ],
+    destiny: '사회를 지탱하는 기둥과 같은 사주입니다. 戊土의 묵직한 책임감과 庚金의 실행력이 결합하여, 질서와 규율로 공동체를 이끄는 리더십을 타고났습니다. 옳고 그름이 분명하며, 정해진 원칙을 지키는 것을 삶의 기본으로 삼습니다. 때로는 유연함이 더 큰 힘이 될 수 있음을 기억하십시오.',
+    luck: [
+      { label: '재물운', val: 88 }, { label: '관운', val: 92 },
+      { label: '애정운', val: 58 }, { label: '건강운', val: 75 },
+      { label: '명예운', val: 85 }
+    ],
+    yearly: '을사년은 권위와 책임이 동시에 커지는 해입니다. 더 높은 자리, 더 큰 역할을 맡게 될 기운이 강합니다. 조직 내에서의 신뢰가 최고조에 달하며, 재물운도 동반 상승합니다. 단 독단적인 결정보다 구성원의 의견을 청취하는 자세가 더 큰 성과를 가져옵니다.',
+    good: 'ISTJ · ISFJ',
+    bad: 'INFP · INTP'
+  },
+  ESFJ: {
+    nickname: '집정관 · 화합',
+    pillars: [
+      { label: '년주', h: '丁', e: '未', hm: '정', em: '미' },
+      { label: '월주', h: '己', e: '卯', hm: '기', em: '묘' },
+      { label: '일주', h: '丁', e: '亥', hm: '정', em: '해' },
+      { label: '시주', h: '甲', e: '午', hm: '갑', em: '오' }
+    ],
+    destiny: '꽃이 만발한 연회장 같은 화합(和合)의 사주입니다. 丁火의 따뜻한 불꽃과 己土의 풍요로운 대지가 만나, 사람들을 하나로 모으고 함께하는 즐거움을 만들어내는 타고난 연결자입니다. 주변의 행복이 곧 자신의 행복이 되며, 그 에너지로 점점 더 넓은 세상을 품게 됩니다. 타인의 평가에 너무 흔들리지 않는 중심이 필요합니다.',
+    luck: [
+      { label: '재물운', val: 75 }, { label: '관운', val: 78 },
+      { label: '애정운', val: 87 }, { label: '건강운', val: 70 },
+      { label: '명예운', val: 72 }
+    ],
+    yearly: '을사년은 관계의 해입니다. 소중한 사람들과의 유대가 더욱 깊어지고, 새로운 커뮤니티에서 중심적인 역할을 맡게 됩니다. 봄에 결혼, 임신 등 경사스러운 소식이 주변에 가득할 것입니다. 모든 사람을 만족시키려 하지 말고, 진심으로 소중한 관계에 집중하십시오.',
+    good: 'ISFJ · ISTJ',
+    bad: 'INTP · INFP'
+  },
+  ISTP: {
+    nickname: '장인 · 검객',
+    pillars: [
+      { label: '년주', h: '庚', e: '申', hm: '경', em: '신' },
+      { label: '월주', h: '壬', e: '子', hm: '임', em: '자' },
+      { label: '일주', h: '庚', e: '寅', hm: '경', em: '인' },
+      { label: '시주', h: '壬', e: '午', hm: '임', em: '오' }
+    ],
+    destiny: '조용하지만 아무도 흉내 낼 수 없는 경지에 이르는 장인(匠人)의 사주입니다. 庚金의 날카로운 집중력과 壬水의 냉정한 분석력이 결합하여, 어떤 복잡한 문제도 차갑게 해체하고 정확히 해결하는 능력을 타고났습니다. 말보다 행동으로, 이론보다 실제로 증명하는 것이 이 명의 방식입니다. 고독을 두려워하지 않으며, 그 고독 속에서 진정한 실력이 무르익습니다.',
+    luck: [
+      { label: '재물운', val: 78 }, { label: '관운', val: 70 },
+      { label: '애정운', val: 45 }, { label: '건강운', val: 82 },
+      { label: '명예운', val: 65 }
+    ],
+    yearly: '을사년은 기술과 실력이 인정받는 해입니다. 오랫동안 묵묵히 갈고닦은 능력이 빛을 발할 기회가 찾아옵니다. 불필요한 인간관계보다 핵심적인 일에 집중하면 큰 성과를 냅니다. 9월에 예상치 못한 곳에서 흥미로운 도전이 찾아올 것입니다.',
+    good: 'ESTP · ISFP',
+    bad: 'ENFJ · ESFJ'
+  },
+  ISFP: {
+    nickname: '모험가 · 예인',
+    pillars: [
+      { label: '년주', h: '乙', e: '卯', hm: '을', em: '묘' },
+      { label: '월주', h: '癸', e: '亥', hm: '계', em: '해' },
+      { label: '일주', h: '己', e: '未', hm: '기', em: '미' },
+      { label: '시주', h: '乙', e: '丑', hm: '을', em: '축' }
+    ],
+    destiny: '봄 들판을 자유롭게 뛰노는 예인(藝人)의 사주입니다. 乙木의 유연하고 아름다운 감수성과 癸水의 깊은 감정이 결합하여, 세상의 아름다움을 온몸으로 흡수하고 표현하는 예술적 영혼을 타고났습니다. 지금 이 순간의 아름다움을 가장 소중히 여기며, 그 순수한 감동이 보는 이의 마음을 움직입니다. 미래 걱정보다 현재의 풍요로움에 감사하십시오.',
+    luck: [
+      { label: '재물운', val: 58 }, { label: '관운', val: 55 },
+      { label: '애정운', val: 82 }, { label: '건강운', val: 74 },
+      { label: '명예운', val: 70 }
+    ],
+    yearly: '을사년은 미적 감각이 최고조에 달하는 해입니다. 예술, 음악, 디자인 관련 분야에서 특히 좋은 기운이 흐릅니다. 3월에 창작 활동에 새로운 영감을 줄 만남이 있을 것이며, 그 인연이 소중히 이어질 것입니다. 재물보다 삶의 질과 심미적 만족을 추구하는 것이 이 해의 방향입니다.',
+    good: 'ENFJ · INFJ',
+    bad: 'ENTJ · ESTJ'
+  },
+  ESTP: {
+    nickname: '기업가 · 용',
+    pillars: [
+      { label: '년주', h: '丙', e: '子', hm: '병', em: '자' },
+      { label: '월주', h: '甲', e: '申', hm: '갑', em: '신' },
+      { label: '일주', h: '丙', e: '午', hm: '병', em: '오' },
+      { label: '시주', h: '庚', e: '寅', hm: '경', em: '인' }
+    ],
+    destiny: '하늘을 가르는 용(龍)의 기운을 타고난 사주입니다. 丙火의 폭발적 에너지와 甲木의 거침없는 전진이 결합하여, 어떤 상황에서도 기회를 낚아채는 날렵함을 지녔습니다. 위기가 기회가 되고, 역경이 오히려 도약의 발판이 됩니다. 지금 이 순간에 모든 것을 쏟아붓는 폭발적인 생명력이 이 명의 가장 큰 무기입니다.',
+    luck: [
+      { label: '재물운', val: 85 }, { label: '관운', val: 75 },
+      { label: '애정운', val: 72 }, { label: '건강운', val: 80 },
+      { label: '명예운', val: 78 }
+    ],
+    yearly: '을사년은 뱀과 용이 조우하는 역동적인 해입니다. 새로운 사업 기회나 투자처가 나타날 수 있으니 촉각을 세우십시오. 빠른 판단력이 강점이지만, 중요한 결정에서는 하루를 더 생각하는 습관이 큰 실수를 막아줍니다. 4월과 10월에 운이 최고조에 달합니다.',
+    good: 'ISTP · ESTP',
+    bad: 'INFJ · INTJ'
+  },
+  ESFP: {
+    nickname: '연예인 · 태양꽃',
+    pillars: [
+      { label: '년주', h: '丙', e: '午', hm: '병', em: '오' },
+      { label: '월주', h: '丁', e: '卯', hm: '정', em: '묘' },
+      { label: '일주', h: '甲', e: '午', hm: '갑', em: '오' },
+      { label: '시주', h: '丙', e: '寅', hm: '병', em: '인' }
+    ],
+    destiny: '세상을 빛으로 가득 채우는 태양꽃의 사주입니다. 丙火와 丁火가 겹치는 강렬한 화기(火氣)의 명으로, 어디에 있든 그 공간을 환하게 밝히는 천부적인 존재감을 타고났습니다. 기쁨을 나누는 것이 삶의 목적이며, 사람들 사이에서 에너지를 받고 또 내뿜는 무한한 생명력을 지닙니다. 지금 이 순간이 가장 소중하며, 그 기쁨이 진짜 보물입니다.',
+    luck: [
+      { label: '재물운', val: 70 }, { label: '관운', val: 65 },
+      { label: '애정운', val: 92 }, { label: '건강운', val: 78 },
+      { label: '명예운', val: 75 }
+    ],
+    yearly: '을사년은 당신을 중심으로 세상이 돌아가는 것 같은 해입니다. 인기와 인연이 최고조에 달하며, 특히 봄과 여름에 로맨틱한 기운이 가득합니다. 새로운 취미나 공연, 여행에서 인생의 소중한 기억을 만들게 됩니다. 충동적인 소비에 주의하고 미래를 위한 저축도 잊지 마십시오.',
+    good: 'ISFP · ISFJ',
+    bad: 'INTJ · INFJ'
+  }
+};
+
+function showResult(type) {
+  const d = DATA[type];
+  document.getElementById('selection-screen').style.display = 'none';
+  const rs = document.getElementById('result-screen');
+  rs.style.display = 'block';
+
+  document.getElementById('res-mbti').textContent = type;
+  document.getElementById('res-nickname').textContent = d.nickname;
+
+  // Pillars
+  const pillarsHTML = d.pillars.map(p => `
+    <div class="pillar">
+      <div class="pillar-label">${p.label}</div>
+      <div class="pillar-heavenly">${p.h}</div>
+      <div class="pillar-earthly">${p.e}</div>
+      <div class="pillar-meaning">${p.hm} · ${p.em}</div>
+    </div>
+  `).join('');
+  document.getElementById('res-pillars').innerHTML = pillarsHTML;
+
+  document.getElementById('res-destiny').textContent = d.destiny;
+
+  // Luck bars
+  const luckHTML = d.luck.map(l => `
+    <div class="luck-row">
+      <div class="luck-label">${l.label}</div>
+      <div class="luck-bar-bg"><div class="luck-bar-fill" style="width:0%" data-val="${l.val}"></div></div>
+      <div class="luck-value">${l.val}</div>
+    </div>
+  `).join('');
+  document.getElementById('res-luck').innerHTML = luckHTML;
+
+  document.getElementById('res-yearly').textContent = d.yearly;
+  document.getElementById('res-good').textContent = d.good;
+  document.getElementById('res-bad').textContent = d.bad;
+
+  // Animate bars
+  setTimeout(() => {
+    document.querySelectorAll('.luck-bar-fill').forEach(el => {
+      el.style.width = el.dataset.val + '%';
+    });
+  }, 300);
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  document.getElementById('result-card').classList.remove('fade-in');
+  void document.getElementById('result-card').offsetWidth;
+  document.getElementById('result-card').classList.add('fade-in');
+}
+
+function goBack() {
+  document.getElementById('result-screen').style.display = 'none';
+  document.getElementById('selection-screen').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Particles
+(function() {
+  const container = document.getElementById('particles');
+  for (let i = 0; i < 18; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.animationDelay = Math.random() * 8 + 's';
+    p.style.animationDuration = (6 + Math.random() * 6) + 's';
+    container.appendChild(p);
+  }
+})();
+</script>
+</body>
+</html>
